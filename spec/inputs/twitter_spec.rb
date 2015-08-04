@@ -37,9 +37,12 @@ describe LogStash::Inputs::Twitter do
 
    describe "#run" do
      it "should run only with track, follow and location and return tweet" do
-       twitter_instance.stub(:filter).and_return(false) #improve
-       twitter_plugin.run(:queue)
+       thread = Thread.new do
+         twitter_plugin.run(:queue).once
+       end
+
        expect(twitter_instance).to receive(:filter)
+       thread.kill
        #expect(twitter_instance).to have_received(:filter).with(:keywords, :follows, :locations)
      end
    end
